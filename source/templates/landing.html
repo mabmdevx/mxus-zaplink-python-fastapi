@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Shorten URL{% endblock %}
+
+{% block content %}
+
+    <div class="row justify-content-center">
+        <div class="col-lg-5">
+            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                <div class="card-header">
+                    <h3 class="text-center font-weight-light my-4">{{ SITE_NAME }}</h3>
+                    <nav style="text-align: center">
+                        <a href="/">Home</a> |
+                        <a href="/get-original-url">Get Original URL</a>
+                    </nav>
+                </div>
+                <div class="card-body">
+
+                    {% if postback == True and not error_message %}
+                        <div class="small mb-3 text-muted">Your Shortened URL:</div>
+                            <p><strong>Original URL: </strong>{{ original_url }}</p>
+                            <p><strong>Short URL: </strong><a href="{{ short_url }}">{{ short_url }}</a></p>
+                        </div>
+                    {% endif %}
+
+                    {% if postback == True and error_message %}
+                        <p style="color:red; text-align: center">Error: {{ error_message }}</p>
+                    {% endif %}
+
+                    {% if (postback == True and error_message) or not postback %}
+                    <div class="small mb-3 text-muted">Submit your URL:</div>
+                    <form action="/" method="post">
+                        <div class="form-floating mb-3">
+                            <input type="text" id="original_url" name="original_url" class="form-control" placeholder="https://google.com" required>
+                            <label for="original_url">Enter the URL starting with the protocol eg. https://google.com</label>
+                        </div>
+                        <div class="align-items-center justify-content-between mt-1 mb-2" style="text-align: center">
+                            <button type="submit" class="btn btn-success">Shorten</button>
+                        </div>
+                    </form>
+                    {% endif %}
+
+                </div>
+                <div class="card-footer text-center py-3">
+                    <div class="small"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
