@@ -8,12 +8,13 @@ from source.helpers.dbconnection import get_db_connection
 import logging
 from source.helpers.app import (get_shortened_url, get_url_by_slug,
                                 get_current_domain, update_url_visit_count, extract_slug,
-                                validate_url)  # Import helper functions
+                                validate_url, verify_recaptcha)  # Import helper functions
 
 # Load environment variables from .env file
 import os
 from dotenv import load_dotenv
 load_dotenv()
+
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
@@ -30,6 +31,7 @@ app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
 # Env
 SITE_NAME = os.getenv("SITE_NAME")
+RECAPTCHA_SITE_KEY = os.getenv("RECAPTCHA_SITE_KEY")
 
 
 # Routes
@@ -39,14 +41,24 @@ async def form_short_url(request: Request):
     return templates.TemplateResponse("landing.html", {
         "request": request,
         "SITE_NAME": SITE_NAME,
-        "postback": False
+        "postback": False,
+        "RECAPTCHA_SITE_KEY": RECAPTCHA_SITE_KEY
     })
 
 
 # Route - Get Shortened URL
 @app.post("/", response_class=HTMLResponse)
-async def result_short_url(request: Request, original_url: str = Form(...)
-                           , db=Depends(get_db_connection)):
+async def result_short_url(request: Request, original_url: str = Form(...), db=Depends(get_db_connection)):
+    form_data = await request.form()
+    g_recaptcha_response = form_data.get("g-recaptcha-response")
+    logger.info("g_recaptcha_response: " + g_recaptcha_response)
+
+    # Check if CAPTCHA is valid
+    if not verify_recaptcha(g_recaptcha_response):
+        logger.info("CAPTCHA validation failed.")
+        raise HTTPException(status_code=400, detail="Invalid reCAPTCHA")
+    logger.info("CAPTCHA validation successful.")
+
     if validate_url(original_url):
         short_url_slug = get_shortened_url(db, original_url)
 
@@ -65,7 +77,8 @@ async def result_short_url(request: Request, original_url: str = Form(...)
             "request": request,
             "SITE_NAME": SITE_NAME,
             "postback": True,
-            "error_message": error_message
+            "error_message": error_message,
+            "RECAPTCHA_SITE_KEY": RECAPTCHA_SITE_KEY
         })
 
 
@@ -75,7 +88,8 @@ async def form_original_url(request: Request):
     return templates.TemplateResponse("get_original_url.html", {
         "request": request,
         "SITE_NAME": SITE_NAME,
-        "postback": False
+        "postback": False,
+        "RECAPTCHA_SITE_KEY": RECAPTCHA_SITE_KEY
     })
 
 
@@ -101,7 +115,8 @@ async def result_original_url(request: Request, short_url: str = Form(...), db=D
             "request": request,
             "SITE_NAME": SITE_NAME,
             "postback": True,
-            "error_message": error_message
+            "error_message": error_message,
+            "RECAPTCHA_SITE_KEY": RECAPTCHA_SITE_KEY
         })
 
 

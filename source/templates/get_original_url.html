@@ -19,7 +19,13 @@
                     {% if postback == True and not error_message %}
                         <div class="small mb-3 text-muted">Get Original URL:</div>
                             <p><strong>Short URL: </strong><a href="{{ short_url }}">{{ short_url }}</a></p>
-                            <p><strong>Original URL: </strong><a href="{{ original_url }}">{{ original_url }}</a></p>
+                            <p><strong>Original URL: </strong>
+                                {% if original_url == None %}
+                                {{ original_url }}
+                                {% else %}
+                                <a href="{{ original_url }}">{{ original_url }}</a>
+                                {% endif %}
+                            </p>
                         </div>
                     {% endif %}
 
@@ -33,6 +39,9 @@
                         <div class="form-floating mb-3">
                             <input type="text" id="short_url" name="short_url" class="form-control" placeholder="https://google.com" required>
                             <label for="short_url">Enter the Short URL eg. https://{{SITE_NAME}}/xyz</label>
+                        </div>
+                        <div style="margin-top: 10px; display: flex; justify-content: center; align-content: center;">
+                            <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_SITE_KEY }}"></div>
                         </div>
                         <div class="align-items-center justify-content-between mt-1 mb-2" style="text-align: center">
                             <button type="submit" class="btn btn-success">Get Original URL</button>
