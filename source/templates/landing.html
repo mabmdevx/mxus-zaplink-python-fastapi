@@ -19,7 +19,13 @@
                     {% if postback == True and not error_message %}
                         <div class="small mb-3 text-muted">Your Shortened URL:</div>
                             <p><strong>Original URL: </strong>{{ original_url }}</p>
-                            <p><strong>Short URL: </strong><a href="{{ short_url }}">{{ short_url }}</a></p>
+                            <p><strong>Short URL: </strong>
+                                {% if short_url == "UNSAFE" %}
+                                <div style="color:red">UNSAFE!!! Short URL unavailable as the submitted URL was found to be unsafe.</div>
+                                {% else %}
+                                <a href="{{ short_url }}">{{ short_url }}</a>
+                                {% endif %}
+                            </p>
                         </div>
                     {% endif %}
 

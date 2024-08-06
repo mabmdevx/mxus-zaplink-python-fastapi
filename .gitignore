@@ -1,2 +1,4 @@
 .idea
 .env
+source/__pycache__/*
+source/helpers/__pycache__/*

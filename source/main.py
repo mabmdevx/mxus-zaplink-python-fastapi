@@ -64,12 +64,17 @@ async def result_short_url(request: Request, original_url: str = Form(...), db=D
 
         current_domain = get_current_domain(request)
 
+        if short_url_slug == "UNSAFE":
+            short_url_val = "UNSAFE"
+        else:
+            short_url_val = f"{current_domain}/{short_url_slug}"
+
         return templates.TemplateResponse("landing.html", {
             "request": request,
             "SITE_NAME": SITE_NAME,
             "postback": True,
             "original_url": original_url,
-            "short_url": f"{current_domain}/{short_url_slug}"
+            "short_url": short_url_val
         })
     else:
         error_message = "Invalid URL provided. Please enter a valid URL."

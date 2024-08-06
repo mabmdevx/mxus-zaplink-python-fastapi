@@ -1,9 +1,9 @@
-import os
-
 from fastapi import Request
 import shortuuid
 import logging
 import requests
+import os
+import json
 from urllib.parse import urlparse
 from dotenv import load_dotenv
 load_dotenv()
@@ -35,26 +35,35 @@ def get_shortened_url(db, req_original_url: str):
         logger.info("Found existing slug: " + short_url_slug + ", generating new slug.")
         short_url_slug = shortuuid.ShortUUID().random(length=8)
 
-    # Insert the new URL into the database
-    create_url(db, req_original_url, short_url_slug)
+    # Check if URL is safe or not
+    url_is_safe_result = check_is_url_safe(req_original_url)
 
-    return short_url_slug
+    url_is_safe = url_is_safe_result["is_safe"]
+    url_is_safe_details_str = json.dumps(url_is_safe_result)
+
+    # Insert the new URL into the database
+    create_url(db, req_original_url, short_url_slug, url_is_safe, url_is_safe_details_str)
+
+    if url_is_safe:
+        return short_url_slug
+    else:
+        return "UNSAFE"
 
 
 def check_short_url_exists(db, short_url: str) -> bool:
     cursor = db.cursor()
-    query = "SELECT COUNT(*) FROM urls WHERE urlx_slug = %s"
+    query = "SELECT COUNT(*) FROM urls WHERE urlx_is_safe = true AND urlx_slug = %s"
     cursor.execute(query, (short_url,))
     count = cursor.fetchone()[0]
     cursor.close()
     return count > 0
 
 
-def create_url(db, req_original_url: str, short_url_slug: str):
+def create_url(db, req_original_url: str, short_url_slug: str, url_is_safe: bool, unsafe_details: str):
     # Insert into database
     cursor = db.cursor()
-    query = "INSERT INTO urls (urlx_original_url, urlx_slug) VALUES (%s, %s)"
-    cursor.execute(query, (req_original_url, short_url_slug))
+    query = "INSERT INTO urls (urlx_original_url, urlx_slug, urlx_is_safe, urlx_unsafe_details) VALUES (%s, %s, %s, %s)"
+    cursor.execute(query, (req_original_url, short_url_slug, url_is_safe, unsafe_details))
     db.commit()
     cursor.close()
     logger.info("Inserted new url in database - slug: " + short_url_slug)
@@ -62,7 +71,7 @@ def create_url(db, req_original_url: str, short_url_slug: str):
 
 def get_url_by_original_url(db, req_original_url: str):
     cursor = db.cursor(dictionary=True)
-    query = "SELECT urlx_id, urlx_slug FROM urls WHERE urlx_original_url = %s LIMIT 1"
+    query = "SELECT urlx_id, urlx_slug FROM urls WHERE urlx_is_safe = true AND urlx_original_url = %s LIMIT 1"
     cursor.execute(query, (req_original_url,))
     result = cursor.fetchone()
     cursor.close()
@@ -73,7 +82,7 @@ def get_url_by_original_url(db, req_original_url: str):
 
 def get_url_by_slug(db, req_slug: str):
     cursor = db.cursor(dictionary=True)
-    query = "SELECT urlx_id, urlx_original_url FROM urls WHERE urlx_slug = %s"
+    query = "SELECT urlx_id, urlx_original_url FROM urls WHERE urlx_is_safe = true AND urlx_slug = %s"
     cursor.execute(query, (req_slug,))
     result = cursor.fetchone()
     cursor.close()
@@ -84,7 +93,7 @@ def get_url_by_slug(db, req_slug: str):
 
 def update_url_visit_count(db, req_slug: str):
     cursor = db.cursor()
-    query = "UPDATE urls SET urlx_visit_count = urlx_visit_count + 1 WHERE urlx_slug = %s"
+    query = "UPDATE urls SET urlx_visit_count = urlx_visit_count + 1 WHERE urlx_is_safe = true AND urlx_slug = %s"
     cursor.execute(query, (req_slug,))
     db.commit()
     cursor.close()
@@ -121,3 +130,41 @@ def verify_recaptcha(token: str):
     response = requests.post("https://www.google.com/recaptcha/api/siteverify", data=payload)
     result = response.json()
     return result.get("success", False)
+
+
+def check_is_url_safe(url: str):
+    api_key = os.getenv('GOOGLE_SAFE_BROWSING_API_KEY')
+    if not api_key:
+        raise ValueError("Google Safe Browsing API key not set")
+
+    endpoint = "https://safebrowsing.googleapis.com/v4/threatMatches:find"
+    payload = {
+        "client": {
+            "clientId": "yourcompanyname",
+            "clientVersion": "1.0"
+        },
+        "threatInfo": {
+            "threatTypes": ["MALWARE", "SOCIAL_ENGINEERING"],
+            "platformTypes": ["ANY_PLATFORM"],
+            "threatEntryTypes": ["URL"],
+            "threatEntries": [
+                {"url": url}
+            ]
+        }
+    }
+    params = {'key': api_key}
+    response = requests.post(endpoint, json=payload, params=params)
+    result = response.json()
+
+    if "matches" in result:
+        url_safety_check_result = {"is_safe": False, "details": result}
+        logger.info("url_safety_check_result: " + json.dumps(url_safety_check_result))
+        return url_safety_check_result
+    else:
+        url_safety_check_result = {"is_safe": True}
+        logger.info("url_safety_check_result: " + json.dumps(url_safety_check_result))
+        return url_safety_check_result
+
+
+
+
