@@ -2,16 +2,19 @@ from fastapi import FastAPI, Form, Request, HTTPException, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-
-from source.helpers.dbconnection import get_db_connection
-
 import logging
-from source.helpers.app import (get_shortened_url, get_url_by_slug,
-                                get_current_domain, update_url_visit_count, extract_slug,
-                                validate_url, verify_recaptcha)  # Import helper functions
-
-# Load environment variables from .env file
 import os
+from source.helpers.db_connection import get_db_connection
+
+
+# Import helper functions
+from source.helpers.url import (validate_url)
+from source.helpers.captcha import (verify_recaptcha)
+from source.helpers.app import (get_shortened_url, get_url_by_slug,
+                                get_current_domain, update_url_visit_count, extract_slug)
+
+
+# Load environment variables
 from dotenv import load_dotenv
 load_dotenv()
 
