@@ -27,6 +27,8 @@ Application will start on http://localhost:8000
 - Save URLs as unique hashes in DB
 - Logging standard [PENDING]
 - Error handling [PENDING]
+- Get email alert for failures [PENDING]
+- Get email alert if unsafe url is submitted
 
 # Notes - Google RECAPTCHA API
 - Generate the API key and add it to .env file

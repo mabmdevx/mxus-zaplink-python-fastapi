@@ -1,12 +1,11 @@
 from fastapi import Request
 import shortuuid
 import logging
-import requests
 import os
 import json
 from urllib.parse import urlparse
 
-
+from source.helpers.email import send_email
 # Import helper functions
 from source.helpers.url import (check_is_url_safe, generate_url_hash)
 
@@ -54,6 +53,12 @@ def get_shortened_url(db, req_original_url: str):
     if url_is_safe:
         return short_url_slug
     else:
+        # Send an email alert to Site Admin if an unsafe URL is submitted
+        send_email(
+            to_email=os.getenv('SITE_ADMIN_EMAIL'),
+            subject=f"{{ SITE_NAME }}: Unsafe URL submitted",
+            content=f"Unsafe URL Submitted. URL Slug: {{ short_url_slug }}"
+        )
         return "UNSAFE"
 
 
