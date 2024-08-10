@@ -19,16 +19,16 @@
 
 Application will start on http://localhost:8000
 
-# Features
+# Features (apart from Short URL generation)
 - Inverse lookup
 - Display validation error messages to users
 - Protect using CAPTCHA (using Google RECAPTCHA)
 - Protect using Safe URL Check API (using Google Safe Browsing API)
 - Save URLs as unique hashes in DB
-- Logging standard [PENDING]
+- Logging [PENDING]
 - Error handling [PENDING]
-- Get email alert for failures [PENDING]
-- Get email alert if unsafe url is submitted
+- Get email alerts (using SendGrid) for failures [PENDING]
+- Get email alerts (using SendGrid) if unsafe url is submitted
 
 # Notes - Google RECAPTCHA API
 - Generate the API key and add it to .env file
@@ -37,3 +37,6 @@ Application will start on http://localhost:8000
 - Generate the API key and add it to .env file
 - Restrict the key to just Google Safe Browsing API for security
 - https://testsafebrowsing.appspot.com/ = This website has list of urls for testing.
+
+# Notes - SendGrid API
+- Generate the API key and add it to .env file
