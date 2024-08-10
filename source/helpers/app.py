@@ -5,6 +5,7 @@ import requests
 import os
 import json
 from urllib.parse import urlparse
+import hashlib
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -60,19 +61,26 @@ def check_short_url_exists(db, short_url: str) -> bool:
 
 
 def create_url(db, req_original_url: str, short_url_slug: str, url_is_safe: bool, unsafe_details: str):
+    # Generate the hash for the original url
+    original_url_hash = generate_url_hash(req_original_url)
+
     # Insert into database
     cursor = db.cursor()
-    query = "INSERT INTO urls (urlx_original_url, urlx_slug, urlx_is_safe, urlx_unsafe_details) VALUES (%s, %s, %s, %s)"
-    cursor.execute(query, (req_original_url, short_url_slug, url_is_safe, unsafe_details))
+    query = ("INSERT INTO urls (urlx_original_url, urlx_hash, urlx_slug, urlx_is_safe, urlx_unsafe_details) VALUES ("
+             "%s, %s, %s, %s, %s)")
+    cursor.execute(query, (req_original_url, original_url_hash, short_url_slug, url_is_safe, unsafe_details))
     db.commit()
     cursor.close()
     logger.info("Inserted new url in database - slug: " + short_url_slug)
 
 
 def get_url_by_original_url(db, req_original_url: str):
+    # Generate the hash for the original url
+    original_url_hash = generate_url_hash(req_original_url)
+
     cursor = db.cursor(dictionary=True)
-    query = "SELECT urlx_id, urlx_slug FROM urls WHERE urlx_is_safe = true AND urlx_original_url = %s LIMIT 1"
-    cursor.execute(query, (req_original_url,))
+    query = "SELECT urlx_id, urlx_slug FROM urls WHERE urlx_is_safe = true AND urlx_hash = %s LIMIT 1"
+    cursor.execute(query, (original_url_hash,))
     result = cursor.fetchone()
     cursor.close()
     if result:
@@ -166,5 +174,19 @@ def check_is_url_safe(url: str):
         return url_safety_check_result
 
 
+def generate_url_hash(url):
+    # Encode the URL to bytes, since hash functions require byte input
+    url_bytes = url.encode('utf-8')
+
+    # Create a SHA-256 hash object
+    sha256_hash = hashlib.sha256()
+
+    # Update the hash object with the URL bytes
+    sha256_hash.update(url_bytes)
+
+    # Get the hexadecimal representation of the hash
+    hash_hex = sha256_hash.hexdigest()
+
+    return hash_hex
 
 

@@ -24,7 +24,7 @@ Application will start on http://localhost:8000
 - Display validation error messages to users
 - Protect using CAPTCHA (using Google RECAPTCHA)
 - Protect using Safe URL Check API (using Google Safe Browsing API)
-- Save URLs as unique hashes in DB [PENDING]
+- Save URLs as unique hashes in DB
 - Logging standard [PENDING]
 - Error handling [PENDING]
 
