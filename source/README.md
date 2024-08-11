@@ -1,8 +1,8 @@
 # Zaplink
 
 ## Description
-- URL Shortener
-- Built using Python FastAPI
+- App Info: URL Shortener
+- Tech Stack: Built using Python FastAPI
 - Creation Start Date: 2024-07-27
 
 ## Install dependencies
