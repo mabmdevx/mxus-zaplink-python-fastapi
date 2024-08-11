@@ -21,12 +21,13 @@ Application will start on http://localhost:8000
 
 # Features (apart from Short URL generation)
 - Inverse lookup
+- Bootstrap template
 - Display validation error messages to users
 - Protect using CAPTCHA (using Google RECAPTCHA)
 - Protect using Safe URL Check API (using Google Safe Browsing API)
 - Save URLs as unique hashes in DB
 - Logging
-- Error handling [PENDING]
+- Error handling
 - Get email alerts (using SendGrid) for failures [PENDING]
 - Get email alerts (using SendGrid) if unsafe url is submitted
 
