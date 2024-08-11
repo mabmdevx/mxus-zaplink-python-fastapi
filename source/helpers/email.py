@@ -1,14 +1,21 @@
 import os
+from dotenv import load_dotenv
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
+# Import helper functions
+from source.helpers.common import initialize_logging
 
 # Load environment variables
-from dotenv import load_dotenv
 load_dotenv()
+
+# Initialize logging
+logger = initialize_logging("email.py")
 
 
 def send_email(to_email, subject, content):
+    logger.debug("send_email() called.")
+
     sendgrid_api_key = os.getenv('SENDGRID_API_KEY')
 
     # Create the email object

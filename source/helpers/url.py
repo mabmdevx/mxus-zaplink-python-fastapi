@@ -1,17 +1,23 @@
-from urllib.parse import urlparse
 import os
+from dotenv import load_dotenv
+from urllib.parse import urlparse
 import requests
 import json
-import logging
 import hashlib
 
+# Import helper functions
+from source.helpers.common import initialize_logging
+
+# Load environment variables
+load_dotenv()
 
 # Initialize logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = initialize_logging("url.py")
 
 
 def validate_url(url: str) -> bool:
+    logger.debug("validate_url() called.")
+
     try:
         result = urlparse(url)
         return all([result.scheme, result.netloc])
@@ -20,6 +26,8 @@ def validate_url(url: str) -> bool:
 
 
 def check_is_url_safe(url: str):
+    logger.debug("check_is_url_safe() called.")
+
     api_key = os.getenv('GOOGLE_SAFE_BROWSING_API_KEY')
     if not api_key:
         raise ValueError("Google Safe Browsing API key not set")
@@ -54,6 +62,8 @@ def check_is_url_safe(url: str):
 
 
 def generate_url_hash(url):
+    logger.debug("generate_url_hash() called.")
+
     # Encode the URL to bytes, since hash functions require byte input
     url_bytes = url.encode('utf-8')
 

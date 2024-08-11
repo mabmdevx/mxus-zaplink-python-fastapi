@@ -1,26 +1,25 @@
+import os
+from dotenv import load_dotenv
 from fastapi import Request
 import shortuuid
-import logging
-import os
 import json
 from urllib.parse import urlparse
 
-from source.helpers.email import send_email
 # Import helper functions
+from source.helpers.common import initialize_logging
+from source.helpers.email import send_email
 from source.helpers.url import (check_is_url_safe, generate_url_hash)
 
-
 # Load environment variables
-from dotenv import load_dotenv
 load_dotenv()
 
-
 # Initialize logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = initialize_logging("app.py")
 
 
 def get_current_domain(request: Request):
+    logger.debug("get_current_domain() called.")
+
     scheme = request.url.scheme
     host = request.url.hostname
     port = request.url.port
@@ -29,16 +28,19 @@ def get_current_domain(request: Request):
 
 
 def get_shortened_url(db, req_original_url: str):
+    logger.debug("get_shortened_url() called.")
+
     # Check if the original URL already exists
     existing_slug = get_url_by_original_url(db, req_original_url)
     if existing_slug:
-        logger.info("Original URL: " + req_original_url + " already exists, returning existing slug: " + existing_slug)
+        logger.info("get_shortened_url() :: Original URL: " + req_original_url + " already exists, returning existing "
+                                                                              "slug: " + existing_slug)
         return existing_slug  # Return existing slug if it exists
 
     # Generate a short URL slug and verify it is unique before inserting into database
     short_url_slug = shortuuid.ShortUUID().random(length=8)
     while check_short_url_exists(db, short_url_slug):
-        logger.info("Found existing slug: " + short_url_slug + ", generating new slug.")
+        logger.info("get_shortened_url() :: Found existing slug: " + short_url_slug + ", generating new slug.")
         short_url_slug = shortuuid.ShortUUID().random(length=8)
 
     # Check if URL is safe or not
@@ -51,8 +53,10 @@ def get_shortened_url(db, req_original_url: str):
     create_url(db, req_original_url, short_url_slug, url_is_safe, url_is_safe_details_str)
 
     if url_is_safe:
+        logger.info(f"get_shortened_url() :: short_url_slug: {{ short_url_slug }}.")
         return short_url_slug
     else:
+        logger.info("get_shortened_url() :: Unsafe URL has been submitted.")
         # Send an email alert to Site Admin if an unsafe URL is submitted
         send_email(
             to_email=os.getenv('SITE_ADMIN_EMAIL'),
@@ -63,6 +67,8 @@ def get_shortened_url(db, req_original_url: str):
 
 
 def check_short_url_exists(db, short_url: str) -> bool:
+    logger.debug("check_short_url_exists() called.")
+
     cursor = db.cursor()
     query = "SELECT COUNT(*) FROM urls WHERE urlx_is_safe = true AND urlx_slug = %s"
     cursor.execute(query, (short_url,))
@@ -72,6 +78,8 @@ def check_short_url_exists(db, short_url: str) -> bool:
 
 
 def create_url(db, req_original_url: str, short_url_slug: str, url_is_safe: bool, unsafe_details: str):
+    logger.debug("create_url() called.")
+
     # Generate the hash for the original url
     original_url_hash = generate_url_hash(req_original_url)
 
@@ -86,6 +94,8 @@ def create_url(db, req_original_url: str, short_url_slug: str, url_is_safe: bool
 
 
 def get_url_by_original_url(db, req_original_url: str):
+    logger.debug("get_url_by_original_url() called.")
+
     # Generate the hash for the original url
     original_url_hash = generate_url_hash(req_original_url)
 
@@ -100,6 +110,8 @@ def get_url_by_original_url(db, req_original_url: str):
 
 
 def get_url_by_slug(db, req_slug: str):
+    logger.debug("get_url_by_slug() called.")
+
     cursor = db.cursor(dictionary=True)
     query = "SELECT urlx_id, urlx_original_url FROM urls WHERE urlx_is_safe = true AND urlx_slug = %s"
     cursor.execute(query, (req_slug,))
@@ -111,6 +123,8 @@ def get_url_by_slug(db, req_slug: str):
 
 
 def update_url_visit_count(db, req_slug: str):
+    logger.debug("update_url_visit_count() called.")
+
     cursor = db.cursor()
     query = "UPDATE urls SET urlx_visit_count = urlx_visit_count + 1 WHERE urlx_is_safe = true AND urlx_slug = %s"
     cursor.execute(query, (req_slug,))
@@ -119,11 +133,11 @@ def update_url_visit_count(db, req_slug: str):
 
 
 def extract_slug(full_short_url: str) -> str:
+    logger.debug("extract_slug() called.")
+
     parsed_url = urlparse(full_short_url)
     slug = parsed_url.path.strip('/')  # Remove leading and trailing slashes
     return slug
-
-
 
 
 

@@ -1,12 +1,19 @@
+import os
+from dotenv import load_dotenv
 import mysql.connector
 from mysql.connector import Error
 import logging
-import os
-from dotenv import load_dotenv
+
+# Import helper functions
+from source.helpers.common import initialize_logging
 
 # Load environment variables from .env file
 load_dotenv()
 
+# Initialize logging
+logger = initialize_logging("db_connection.py")
+
+# Load database info from ENV
 DATABASE_HOST = os.getenv("DATABASE_HOST")
 DATABASE_USER = os.getenv("DATABASE_USER")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
@@ -14,6 +21,8 @@ DATABASE_NAME = os.getenv("DATABASE_NAME")
 
 
 def create_connection():
+    logger.debug("create_connection() called.")
+
     connection = None
     try:
         connection = mysql.connector.connect(
@@ -29,6 +38,8 @@ def create_connection():
 
 
 def get_db_connection():
+    logger.debug("get_db_connection() called.")
+
     db = create_connection()
     try:
         yield db

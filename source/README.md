@@ -25,7 +25,7 @@ Application will start on http://localhost:8000
 - Protect using CAPTCHA (using Google RECAPTCHA)
 - Protect using Safe URL Check API (using Google Safe Browsing API)
 - Save URLs as unique hashes in DB
-- Logging [PENDING]
+- Logging
 - Error handling [PENDING]
 - Get email alerts (using SendGrid) for failures [PENDING]
 - Get email alerts (using SendGrid) if unsafe url is submitted
