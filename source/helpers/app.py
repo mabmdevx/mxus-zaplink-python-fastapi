@@ -30,35 +30,42 @@ def get_current_domain(request: Request):
 def get_shortened_url(db, req_original_url: str):
     logger.debug("get_shortened_url() called.")
 
+    # Check if URL is safe or not
+    url_is_safe_result = check_is_url_safe(req_original_url)
+    url_is_safe = url_is_safe_result["is_safe"]
+    url_is_safe_details_str = json.dumps(url_is_safe_result)
+
     # Check if the original URL already exists
     existing_slug = get_url_by_original_url(db, req_original_url)
     if existing_slug:
         logger.info("get_shortened_url() :: Original URL: " + req_original_url + " already exists, returning existing "
                                                                               "slug: " + existing_slug)
-        return existing_slug  # Return existing slug if it exists
+    else:
+        logger.info("get_shortened_url() :: existing_slug: " + str(existing_slug))
 
-    # Generate a short URL slug and verify it is unique before inserting into database
-    short_url_slug = shortuuid.ShortUUID().random(length=8)
-    while check_short_url_exists(db, short_url_slug):
-        logger.info("get_shortened_url() :: Found existing slug: " + short_url_slug + ", generating new slug.")
+    # If not existing URL, generate a new short URL slug and verify it is unique before inserting into database
+    if existing_slug is None:
         short_url_slug = shortuuid.ShortUUID().random(length=8)
+        logger.info("get_shortened_url() :: New slug generated: " + short_url_slug)
+        while check_short_url_exists(db, short_url_slug):
+            logger.info("get_shortened_url() :: Found existing slug: " + short_url_slug + ", generating new slug.")
+            short_url_slug = shortuuid.ShortUUID().random(length=8)
+            logger.info("get_shortened_url() :: New slug generated as it was not unique: " + short_url_slug)
 
-    # Check if URL is safe or not
-    url_is_safe_result = check_is_url_safe(req_original_url)
+        # Insert the new URL into the database
+        create_url(db, req_original_url, short_url_slug, url_is_safe, url_is_safe_details_str)
+    else:
+        short_url_slug = existing_slug
 
-    url_is_safe = url_is_safe_result["is_safe"]
-    url_is_safe_details_str = json.dumps(url_is_safe_result)
-
-    # Insert the new URL into the database
-    create_url(db, req_original_url, short_url_slug, url_is_safe, url_is_safe_details_str)
-
+    # Response based on if URL is safe or not
     if url_is_safe:
-        logger.info(f"get_shortened_url() :: short_url_slug: {{ short_url_slug }}.")
+        logger.info("get_shortened_url() :: short_url_slug: " + short_url_slug)
         return short_url_slug
     else:
         logger.info("get_shortened_url() :: Unsafe URL has been submitted.")
 
         # Send an email alert to Site Admin - if an unsafe URL is submitted
+        logger.info("get_shortened_url() :: Sending email alert - Unsafe URL has been submitted.")
         env_site_admin_email = os.getenv('SITE_ADMIN_EMAIL')
         env_site_name = os.getenv('SITE_NAME')
 
@@ -105,7 +112,7 @@ def get_url_by_original_url(db, req_original_url: str):
     original_url_hash = generate_url_hash(req_original_url)
 
     cursor = db.cursor(dictionary=True)
-    query = "SELECT urlx_id, urlx_slug FROM urls WHERE urlx_is_safe = true AND urlx_hash = %s LIMIT 1"
+    query = "SELECT urlx_id, urlx_slug FROM urls WHERE urlx_hash = %s LIMIT 1"
     cursor.execute(query, (original_url_hash,))
     result = cursor.fetchone()
     cursor.close()

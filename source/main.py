@@ -56,7 +56,8 @@ async def global_exception_handler(request: Request, exc: Exception):
     logger.info(f"global_exception_handler() :: Exception occurred in: {exc_occurred_in}")
     logger.info(f"global_exception_handler() :: Exception details: {str(exc)}")
 
-    # Send an email alert to Site Admin - if an unsafe URL is submitted
+    # Send an email alert to Site Admin - if a global exception is caught
+    logger.info("global_exception_handler() :: Sending email alert - Global exception.")
     env_site_admin_email = os.getenv('SITE_ADMIN_EMAIL')
     env_site_name = os.getenv('SITE_NAME')
 
