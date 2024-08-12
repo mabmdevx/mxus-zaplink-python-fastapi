@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import traceback
 
 # Import helper functions
-from source.helpers.common import initialize_logging, error_page
+from source.helpers.common import initialize_logging, error_page, extract_filename_with_relative_path
 from source.helpers.db_connection import get_db_connection
 from source.helpers.email import send_email
 from source.helpers.url import validate_url
@@ -60,10 +60,12 @@ async def global_exception_handler(request: Request, exc: Exception):
     env_site_admin_email = os.getenv('SITE_ADMIN_EMAIL')
     env_site_name = os.getenv('SITE_NAME')
 
+    exc_filename = extract_filename_with_relative_path(exc_occurred_in)
+
     send_email(
         to_email=env_site_admin_email,
         subject=env_site_name + ": Global exception",
-        content="Global exception occurred in: " + exc_occurred_in + ".<br/><br/>Details: " + str(exc)
+        content="Global exception occurred in: " + exc_filename + ".<br/><br/>Details: " + str(exc)
     )
 
     return error_page(request, error_code=500, error_message="An unexpected error occurred")

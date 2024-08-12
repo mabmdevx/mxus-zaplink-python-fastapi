@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 import logging
 from fastapi.templating import Jinja2Templates
+import re
 
 # Load environment variables
 load_dotenv()
@@ -50,3 +51,18 @@ def error_page(request, error_code, error_message):
             },
             status_code=error_code
         )
+
+
+def extract_filename_with_relative_path(log_entry):
+
+    # Regular expression to match the path after "zaplink_python_fastapi"
+    pattern = r'zaplink_python_fastapi\\(.+)"'
+
+    # Search for the pattern in the log entry
+    match = re.search(pattern, log_entry)
+
+    if match:
+        extracted_path = match.group(1)
+        return extracted_path
+    else:
+        return "Unknown filename"
