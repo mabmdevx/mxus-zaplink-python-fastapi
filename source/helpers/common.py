@@ -17,11 +17,11 @@ def initialize_logging(filename):
     default_log_level = 'INFO'
 
     # Get the log level from the environment variable
-    log_level_env = os.getenv('LOG_LEVEL', default_log_level).upper()
+    env_log_level = os.getenv('LOG_LEVEL', default_log_level).upper()
 
     # Map the string log level to the logging level
-    log_level = getattr(logging, log_level_env, logging.INFO)
-    print("LOG_LEVEL: " + log_level_env)
+    log_level = getattr(logging, env_log_level, logging.INFO)
+    print("LOG_LEVEL: " + env_log_level)
 
     logging.basicConfig(level=log_level,
                         format='%(asctime)s | %(levelname)s | %(filename)s | %(message)s',
@@ -38,13 +38,13 @@ def error_page(request, error_code, error_message):
     logger.info("error_page() called.")
 
     # Env
-    site_name_env = os.getenv("SITE_NAME")
+    env_site_name = os.getenv("SITE_NAME")
 
     return templates.TemplateResponse(
             "error.html",
             {
                 "request": request,
-                "SITE_NAME": site_name_env,
+                "SITE_NAME": env_site_name,
                 "error_code": error_code,
                 "error_message": error_message,
             },

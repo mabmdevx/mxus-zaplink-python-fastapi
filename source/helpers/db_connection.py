@@ -33,7 +33,7 @@ def create_connection():
         )
         logging.info("Successfully connected to the database")
     except Error as e:
-        logging.error(f"The error '{e}' occurred")
+        raise ValueError(f"DB connection error: '{e}' occurred")
     return connection
 
 

@@ -28,16 +28,22 @@ Application will start on http://localhost:8000
 - Save URLs as unique hashes in DB
 - Logging
 - Error handling
-- Get email alerts (using SendGrid) for failures [PENDING]
+- Get email alerts (using SendGrid) for failures
 - Get email alerts (using SendGrid) if unsafe url is submitted
 
-# Notes - Google RECAPTCHA API
+# Notes
+## Google RECAPTCHA API
 - Generate the API key and add it to .env file
 
-# Notes - Google Safe Browsing API
+## Google Safe Browsing API
 - Generate the API key and add it to .env file
 - Restrict the key to just Google Safe Browsing API for security
 - https://testsafebrowsing.appspot.com/ = This website has list of urls for testing.
 
-# Notes - SendGrid API
+## SendGrid API
 - Generate the API key and add it to .env file
+
+## Favicon
+- Observed that the browser requests /favicon.ico and that triggers a call to /{slug} route, which should be prevented.
+- Hence added a favicon to prevent that.
+- Favicon generated using https://cooltext.com PNG and https://favicon.io

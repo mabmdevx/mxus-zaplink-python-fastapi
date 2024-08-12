@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Form, Request, HTTPException, Depends
+from fastapi import FastAPI, Form, Request, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -9,6 +9,7 @@ import traceback
 # Import helper functions
 from source.helpers.common import initialize_logging, error_page
 from source.helpers.db_connection import get_db_connection
+from source.helpers.email import send_email
 from source.helpers.url import validate_url
 from source.helpers.captcha import verify_recaptcha
 from source.helpers.app import (get_shortened_url, get_url_by_slug,
@@ -55,27 +56,32 @@ async def global_exception_handler(request: Request, exc: Exception):
     logger.info(f"global_exception_handler() :: Exception occurred in: {exc_occurred_in}")
     logger.info(f"global_exception_handler() :: Exception details: {str(exc)}")
 
+    # Send an email alert to Site Admin - if an unsafe URL is submitted
+    env_site_admin_email = os.getenv('SITE_ADMIN_EMAIL')
+    env_site_name = os.getenv('SITE_NAME')
+
+    send_email(
+        to_email=env_site_admin_email,
+        subject=env_site_name + ": Global exception",
+        content="Global exception occurred in: " + exc_occurred_in + ".<br/><br/>Details: " + str(exc)
+    )
+
     return error_page(request, error_code=500, error_message="An unexpected error occurred")
 
 
 # Routes
 # List of predefined static routes
 predefined_routes = [
-    "/favicon.ico",
     "/",
     "/get-original-url"
 ]
 
 
 # This function prevents /{slug} route being called for existing routes
-# Observed that the browser requests /favicon.ico and that triggers a call to /{slug} route, which should be prevented.
 def check_conflicting_routes(short_url_slug: str):
     # Check if the slug matches any predefined route
     if f"/{short_url_slug}" in predefined_routes:
-        raise HTTPException(
-            status_code=400,
-            detail=f"The slug '{short_url_slug}' matches an existing route"
-        )
+        raise ValueError(f"The slug '{short_url_slug}' matches an existing route")
     return short_url_slug
 
 

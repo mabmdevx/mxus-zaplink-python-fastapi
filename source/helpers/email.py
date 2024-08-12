@@ -17,6 +17,8 @@ def send_email(to_email, subject, content):
     logger.debug("send_email() called.")
 
     sendgrid_api_key = os.getenv('SENDGRID_API_KEY')
+    if not sendgrid_api_key:
+        raise ValueError("SendGrid API key not set")
 
     # Create the email object
     message = Mail(
@@ -39,7 +41,7 @@ def send_email(to_email, subject, content):
         print(f"Headers: {response.headers}")
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        raise ValueError(f"SendGrid Email error: '{e}' occurred")
 
 
 # Example usage

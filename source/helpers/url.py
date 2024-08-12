@@ -28,8 +28,8 @@ def validate_url(url: str) -> bool:
 def check_is_url_safe(url: str):
     logger.debug("check_is_url_safe() called.")
 
-    api_key = os.getenv('GOOGLE_SAFE_BROWSING_API_KEY')
-    if not api_key:
+    gsb_api_key = os.getenv('GOOGLE_SAFE_BROWSING_API_KEY')
+    if not gsb_api_key:
         raise ValueError("Google Safe Browsing API key not set")
 
     endpoint = "https://safebrowsing.googleapis.com/v4/threatMatches:find"
@@ -47,7 +47,7 @@ def check_is_url_safe(url: str):
             ]
         }
     }
-    params = {'key': api_key}
+    params = {'key': gsb_api_key}
     response = requests.post(endpoint, json=payload, params=params)
     result = response.json()
 

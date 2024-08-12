@@ -57,12 +57,17 @@ def get_shortened_url(db, req_original_url: str):
         return short_url_slug
     else:
         logger.info("get_shortened_url() :: Unsafe URL has been submitted.")
-        # Send an email alert to Site Admin if an unsafe URL is submitted
+
+        # Send an email alert to Site Admin - if an unsafe URL is submitted
+        env_site_admin_email = os.getenv('SITE_ADMIN_EMAIL')
+        env_site_name = os.getenv('SITE_NAME')
+
         send_email(
-            to_email=os.getenv('SITE_ADMIN_EMAIL'),
-            subject=f"{{ SITE_NAME }}: Unsafe URL submitted",
-            content=f"Unsafe URL Submitted. URL Slug: {{ short_url_slug }}"
+            to_email=env_site_admin_email,
+            subject=env_site_name + ": Unsafe URL submitted",
+            content="Unsafe URL Submitted.<br/><br/>URL Slug: " + short_url_slug
         )
+
         return "UNSAFE"
 
 
