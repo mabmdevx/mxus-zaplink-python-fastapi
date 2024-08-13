@@ -1,4 +1,4 @@
-# Zaplink
+# ZapLink
 
 ## Description
 - App Info: URL Shortener
