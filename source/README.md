@@ -2,7 +2,7 @@
 
 ## Description
 - App Info: URL Shortener
-- Tech Stack: Built using Python FastAPI
+- Tech Stack: Python FastAPI, MySQL
 - Creation Start Date: 2024-07-27
 
 ## Install dependencies
