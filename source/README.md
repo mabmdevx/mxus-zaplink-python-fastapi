@@ -30,6 +30,7 @@ Application will start on http://localhost:8000
 - Error handling
 - Get email alerts (using SendGrid) for failures
 - Get email alerts (using SendGrid) if unsafe url is submitted
+- Statcounter
 
 # Notes
 ## Google RECAPTCHA API

@@ -33,6 +33,28 @@ app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 # Env
 SITE_NAME = os.getenv("SITE_NAME")
 RECAPTCHA_SITE_KEY = os.getenv("RECAPTCHA_SITE_KEY")
+STATCOUNTER_PROJECT = os.getenv("STATCOUNTER_PROJECT")
+STATCOUNTER_SECURITY = os.getenv("STATCOUNTER_SECURITY")
+
+# Statcounter script
+statcounter_script = f"""
+<!-- Default Statcounter code for Link2aLink -->
+<script type="text/javascript">
+var sc_project={STATCOUNTER_PROJECT}; 
+var sc_invisible=1; 
+var sc_security="{STATCOUNTER_SECURITY}"; 
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/{STATCOUNTER_PROJECT}/0/{STATCOUNTER_SECURITY}/1/"
+alt="Web Analytics"
+referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
+<!-- End of Statcounter Code -->
+"""
 
 
 # Global Exception Handler
@@ -96,6 +118,7 @@ async def form_short_url(request: Request):
     return templates.TemplateResponse("landing.html", {
         "request": request,
         "SITE_NAME": SITE_NAME,
+        "statcounter_script": statcounter_script,
         "postback": False,
         "RECAPTCHA_SITE_KEY": RECAPTCHA_SITE_KEY
     })
@@ -131,6 +154,7 @@ async def result_short_url(request: Request, original_url: str = Form(...), db=D
         return templates.TemplateResponse("landing.html", {
             "request": request,
             "SITE_NAME": SITE_NAME,
+            "statcounter_script": statcounter_script,
             "postback": True,
             "original_url": original_url,
             "short_url": short_url_val
@@ -140,6 +164,7 @@ async def result_short_url(request: Request, original_url: str = Form(...), db=D
         return templates.TemplateResponse("landing.html", {
             "request": request,
             "SITE_NAME": SITE_NAME,
+            "statcounter_script": statcounter_script,
             "postback": True,
             "error_message": error_message,
             "RECAPTCHA_SITE_KEY": RECAPTCHA_SITE_KEY
@@ -154,6 +179,7 @@ async def form_original_url(request: Request):
     return templates.TemplateResponse("get_original_url.html", {
         "request": request,
         "SITE_NAME": SITE_NAME,
+        "statcounter_script": statcounter_script,
         "postback": False,
         "RECAPTCHA_SITE_KEY": RECAPTCHA_SITE_KEY
     })
@@ -185,6 +211,7 @@ async def result_original_url(request: Request, short_url: str = Form(...), db=D
         return templates.TemplateResponse("get_original_url.html", {
             "request": request,
             "SITE_NAME": SITE_NAME,
+            "statcounter_script": statcounter_script,
             "postback": True,
             "original_url": original_url,
             "short_url": f"{current_domain}/{short_url_slug}"
@@ -194,6 +221,7 @@ async def result_original_url(request: Request, short_url: str = Form(...), db=D
         return templates.TemplateResponse("get_original_url.html", {
             "request": request,
             "SITE_NAME": SITE_NAME,
+            "statcounter_script": statcounter_script,
             "postback": True,
             "error_message": error_message,
             "RECAPTCHA_SITE_KEY": RECAPTCHA_SITE_KEY
