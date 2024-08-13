@@ -1,0 +1,12 @@
+[Unit]
+Description=Gunicorn instance to serve Zaplink Python FastAPI
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/projects/mxus_zaplink_python_fastapi
+ExecStart=/opt/projects/mxus_zaplink_python_fastapi/venv/bin/gunicorn -c /opt/projects/mxus_zaplink_python_fastapi/config/gunicorn_config.py main:app
+
+[Install]
+WantedBy=multi-user.target
