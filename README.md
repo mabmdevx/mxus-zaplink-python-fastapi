@@ -10,6 +10,7 @@
 ```
 pip install fastapi uvicorn jinja2 python-multipart
 pip install python-dotenv mysql-connector-python pydantic shortuuid
+pip install requests sendgrid
 ```
 
 ### Generate requirements.txt
@@ -81,6 +82,7 @@ source venv/bin/activate
 pip install fastapi uvicorn[standard]
 pip install jinja2 python-multipart
 pip install python-dotenv mysql-connector-python pydantic shortuuid
+pip install requests sendgrid
 ```
 
 ### 2) Setup Gunicorn as production server
