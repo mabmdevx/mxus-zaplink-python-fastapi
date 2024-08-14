@@ -6,14 +6,23 @@ import os
 from dotenv import load_dotenv
 import traceback
 
+
+# Add the source directory to the Python path
+# This is required so that custom modules are found correctly
+# especially while running in Dev mode - "fastapi dev main.py"
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+
 # Import helper functions
-from source.helpers.common import initialize_logging, error_page, extract_filename_with_relative_path
-from source.helpers.db_connection import get_db_connection
-from source.helpers.email import send_email
-from source.helpers.url import validate_url
-from source.helpers.captcha import verify_recaptcha
-from source.helpers.app import (get_shortened_url, get_url_by_slug,
-                                get_current_domain, update_url_visit_count, extract_slug)
+from helpers.common import initialize_logging, error_page, extract_filename_with_relative_path
+from helpers.db_connection import get_db_connection
+from helpers.email import send_email
+from helpers.url import validate_url
+from helpers.captcha import verify_recaptcha
+from helpers.app import (get_shortened_url, get_url_by_slug,
+                         get_current_domain, update_url_visit_count, extract_slug)
+
 
 # Load environment variables
 load_dotenv()

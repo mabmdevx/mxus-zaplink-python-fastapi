@@ -5,7 +5,7 @@ from mysql.connector import Error
 import logging
 
 # Import helper functions
-from source.helpers.common import initialize_logging
+from helpers.common import initialize_logging
 
 # Load environment variables from .env file
 load_dotenv()

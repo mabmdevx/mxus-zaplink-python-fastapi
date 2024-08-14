@@ -6,9 +6,9 @@ import json
 from urllib.parse import urlparse
 
 # Import helper functions
-from source.helpers.common import initialize_logging
-from source.helpers.email import send_email
-from source.helpers.url import (check_is_url_safe, generate_url_hash)
+from helpers.common import initialize_logging
+from helpers.email import send_email
+from helpers.url import (check_is_url_safe, generate_url_hash)
 
 # Load environment variables
 load_dotenv()

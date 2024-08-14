@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import requests
 
 # Import helper functions
-from source.helpers.common import initialize_logging
+from helpers.common import initialize_logging
 
 # Load environment variables
 load_dotenv()
