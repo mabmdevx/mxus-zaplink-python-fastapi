@@ -97,13 +97,17 @@ pip install gunicorn
 Create the Gunicorn config file: gunicorn_config.py
 ```
 bind = "0.0.0.0:8001"
-workers = 4
+workers = 2
 worker_class = "uvicorn.workers.UvicornWorker"
 ```
 
 ### Start Gunicorn
 ```
 gunicorn -c gunicorn_config.py main:app
+```
+OR
+```commandline
+nohup gunicorn -c gunicorn_config.py main:app > gunicorn.log 2>&1 &
 ```
 
 ### 3) Set Up Nginx as a Reverse Proxy
