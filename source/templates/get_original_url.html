@@ -28,6 +28,12 @@
                                 {% endif %}
                             </p>
                         </div>
+
+                        <!-- Mixpanel -->
+                        <script type="text/javascript">
+                            mixpanel.track('link2a.link: get-original-url result page loaded');
+                        </script>
+
                     {% endif %}
 
                     {% if postback == True and error_message %}
@@ -35,19 +41,24 @@
                     {% endif %}
 
                     {% if (postback == True and error_message) or not postback %}
-                    <div class="small mb-3 text-muted">Get the Original URL:</div>
-                    <form action="/get-original-url" method="post">
-                        <div class="form-floating mb-3">
-                            <input type="text" id="short_url" name="short_url" class="form-control" placeholder="https://google.com" required>
-                            <label for="short_url">Enter the Short URL eg. https://{{SITE_NAME}}/xyz</label>
-                        </div>
-                        <div style="margin-top: 10px; display: flex; justify-content: center; align-content: center;">
-                            <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_SITE_KEY }}"></div>
-                        </div>
-                        <div class="align-items-center justify-content-between mt-1 mb-2" style="text-align: center">
-                            <button type="submit" class="btn btn-success">Get Original URL</button>
-                        </div>
-                    </form>
+                        <div class="small mb-3 text-muted">Get the Original URL:</div>
+                        <form action="/get-original-url" method="post">
+                            <div class="form-floating mb-3">
+                                <input type="text" id="short_url" name="short_url" class="form-control" placeholder="https://google.com" required>
+                                <label for="short_url">Enter the Short URL eg. https://{{SITE_NAME}}/xyz</label>
+                            </div>
+                            <div style="margin-top: 10px; display: flex; justify-content: center; align-content: center;">
+                                <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_SITE_KEY }}"></div>
+                            </div>
+                            <div class="align-items-center justify-content-between mt-1 mb-2" style="text-align: center">
+                                <button type="submit" class="btn btn-success">Get Original URL</button>
+                            </div>
+                        </form>
+
+                        <!-- Mixpanel -->
+                        <script type="text/javascript">
+                            mixpanel.track('link2a.link: get-original-url page loaded');
+                        </script>
                     {% endif %}
 
                 </div>
@@ -57,5 +68,7 @@
             </div>
         </div>
     </div>
+
+
 
 {% endblock %}

@@ -8,15 +8,15 @@
   - Google Safe Browsing API
   - SendGrid
   - Statcounter
+  - Mixpanel
 - WebApp Architecture: Postback
-- Creation Start Date: 2024-07-27
 
 ## Dev Environment Setup
 ### Install dependencies
 ```
 pip install fastapi uvicorn jinja2 python-multipart
 pip install python-dotenv mysql-connector-python pydantic shortuuid
-pip install requests sendgrid
+pip install requests sendgrid mixpanel
 ```
 
 ### Generate requirements.txt

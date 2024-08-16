@@ -28,6 +28,11 @@
                                 {% endif %}
                             </p>
                         </div>
+
+                        <!-- Mixpanel -->
+                        <script type="text/javascript">
+                            mixpanel.track('link2a.link: Landing result page loaded');
+                        </script>
                     {% endif %}
 
                     {% if postback == True and error_message %}
@@ -35,19 +40,24 @@
                     {% endif %}
 
                     {% if (postback == True and error_message) or not postback %}
-                    <div class="small mb-3 text-muted">Submit your URL:</div>
-                    <form action="/" method="post">
-                        <div class="form-floating mb-3">
-                            <input type="text" id="original_url" name="original_url" class="form-control" placeholder="https://google.com" required>
-                            <label for="original_url">Enter the URL starting with the protocol eg. https://google.com</label>
-                        </div>
-                        <div style="margin-top: 10px; display: flex; justify-content: center; align-content: center;">
-                            <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_SITE_KEY }}"></div>
-                        </div>
-                        <div class="align-items-center justify-content-between mt-1 mb-2" style="text-align: center">
-                            <button type="submit" class="btn btn-success">Shorten</button>
-                        </div>
-                    </form>
+                        <div class="small mb-3 text-muted">Submit your URL:</div>
+                        <form action="/" method="post">
+                            <div class="form-floating mb-3">
+                                <input type="text" id="original_url" name="original_url" class="form-control" placeholder="https://google.com" required>
+                                <label for="original_url">Enter the URL starting with the protocol eg. https://google.com</label>
+                            </div>
+                            <div style="margin-top: 10px; display: flex; justify-content: center; align-content: center;">
+                                <div class="g-recaptcha" data-sitekey="{{ RECAPTCHA_SITE_KEY }}"></div>
+                            </div>
+                            <div class="align-items-center justify-content-between mt-1 mb-2" style="text-align: center">
+                                <button type="submit" class="btn btn-success">Shorten</button>
+                            </div>
+                        </form>
+
+                        <!-- Mixpanel -->
+                        <script type="text/javascript">
+                            mixpanel.track('link2a.link: Landing page loaded');
+                        </script>
                     {% endif %}
 
                 </div>
@@ -57,5 +67,7 @@
             </div>
         </div>
     </div>
+
+
 
 {% endblock %}

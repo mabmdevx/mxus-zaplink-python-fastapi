@@ -44,6 +44,7 @@ SITE_NAME = os.getenv("SITE_NAME")
 RECAPTCHA_SITE_KEY = os.getenv("RECAPTCHA_SITE_KEY")
 STATCOUNTER_PROJECT = os.getenv("STATCOUNTER_PROJECT")
 STATCOUNTER_SECURITY = os.getenv("STATCOUNTER_SECURITY")
+MIXPANEL_TOKEN = os.getenv("MIXPANEL_TOKEN")
 
 # Statcounter script
 statcounter_script = f"""
@@ -64,7 +65,6 @@ alt="Web Analytics"
 referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
 <!-- End of Statcounter Code -->
 """
-
 
 # Global Exception Handler
 @app.exception_handler(Exception)
@@ -128,6 +128,7 @@ async def form_short_url(request: Request):
         "request": request,
         "SITE_NAME": SITE_NAME,
         "statcounter_script": statcounter_script,
+        "MIXPANEL_TOKEN": MIXPANEL_TOKEN,
         "postback": False,
         "RECAPTCHA_SITE_KEY": RECAPTCHA_SITE_KEY
     })
@@ -164,6 +165,7 @@ async def result_short_url(request: Request, original_url: str = Form(...), db=D
             "request": request,
             "SITE_NAME": SITE_NAME,
             "statcounter_script": statcounter_script,
+            "MIXPANEL_TOKEN": MIXPANEL_TOKEN,
             "postback": True,
             "original_url": original_url,
             "short_url": short_url_val
@@ -174,6 +176,7 @@ async def result_short_url(request: Request, original_url: str = Form(...), db=D
             "request": request,
             "SITE_NAME": SITE_NAME,
             "statcounter_script": statcounter_script,
+            "MIXPANEL_TOKEN": MIXPANEL_TOKEN,
             "postback": True,
             "error_message": error_message,
             "RECAPTCHA_SITE_KEY": RECAPTCHA_SITE_KEY
@@ -189,6 +192,7 @@ async def form_original_url(request: Request):
         "request": request,
         "SITE_NAME": SITE_NAME,
         "statcounter_script": statcounter_script,
+        "MIXPANEL_TOKEN": MIXPANEL_TOKEN,
         "postback": False,
         "RECAPTCHA_SITE_KEY": RECAPTCHA_SITE_KEY
     })
@@ -221,6 +225,7 @@ async def result_original_url(request: Request, short_url: str = Form(...), db=D
             "request": request,
             "SITE_NAME": SITE_NAME,
             "statcounter_script": statcounter_script,
+            "MIXPANEL_TOKEN": MIXPANEL_TOKEN,
             "postback": True,
             "original_url": original_url,
             "short_url": f"{current_domain}/{short_url_slug}"
