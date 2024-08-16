@@ -8,6 +8,7 @@
         <meta name="author" content="" />
         <title>{% block title %}{{ SITE_NAME }} - URL Shortener{% endblock %}</title>
         <link href="assets/css/styles.css" rel="stylesheet" />
+        <link href="assets/css/custom.css" rel="stylesheet" />
         <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
@@ -20,18 +21,33 @@
         <div id="layoutAuthentication">
             <div id="layoutAuthentication_content">
                 <main>
-                    <div class="container" style="margin-top: 100px">
+                    <div class="container" style="margin-top: 90px">
                         {% block content %}
                         {% endblock %}
                     </div>
                 </main>
             </div>
+
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-3">
+                        <div class="card shadow-lg border-0 rounded-lg mt-3 mb-5">
+                            <div class="card bg-secondary text-white built-card">
+                                <div class="card-footer align-items-center justify-content-between">
+                                    <div class="small stretched-link text-center-gray">Built using Python FastAPI</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="layoutAuthentication_footer">
                 <footer class="py-4 bg-light mt-auto">
                     <div class="container-fluid px-4">
                         <div class="d-flex align-items-center justify-content-between small">
                             <div class="text-muted">Copyright &copy; {{ SITE_NAME }}</div>
-                            <div class="text-muted">[Built using Python FastAPI]</div>
+                            <div class="text-muted">&nbsp;</div>
                             <div>
                                 <strong>{{ SITE_NAME }}</strong> by WebServe
                             </div>
