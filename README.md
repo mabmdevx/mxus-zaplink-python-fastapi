@@ -2,7 +2,13 @@
 
 ## Description
 - App Info: URL Shortener
-- Tech Stack: Python FastAPI, MySQL
+- Tech Stack: Python FastAPI, MySQL, HTML, CSS, JS, NGINX
+- Tools/Services used: 
+  - Google RECAPTCHA
+  - Google Safe Browsing API
+  - SendGrid
+  - Statcounter
+- WebApp Architecture: Postback
 - Creation Start Date: 2024-07-27
 
 ## Dev Environment Setup
