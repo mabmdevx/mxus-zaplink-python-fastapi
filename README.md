@@ -2,14 +2,17 @@
 
 ## Description
 - App Info: URL Shortener
+
+# Tech Stack
 - Tech Stack: Python FastAPI, MySQL, HTML, CSS, JS, NGINX
+- WebApp Architecture: Postback
 - Tools/Services used: 
   - Google RECAPTCHA
   - Google Safe Browsing API
   - SendGrid
   - Statcounter
   - Mixpanel
-- WebApp Architecture: Postback
+
 
 ## Dev Environment Setup
 ### Install dependencies
