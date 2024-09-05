@@ -120,6 +120,7 @@ def check_conflicting_routes(short_url_slug: str):
 
 
 # Route - Landing page
+@app.head('/', response_class=HTMLResponse)
 @app.get("/", response_class=HTMLResponse)
 async def form_short_url(request: Request):
     logger.info("GET Route=/ :: form_short_url() called.")
