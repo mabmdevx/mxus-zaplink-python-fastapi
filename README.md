@@ -190,3 +190,9 @@ WantedBy=multi-user.target
 sudo systemctl start zaplink_python_fastapi
 sudo systemctl enable zaplink_python_fastapi
 ```
+
+<img
+class="statcounter"
+src="https://c.statcounter.com/13168248/0/90786b78/1/"
+alt="Web Analytics"
+referrerPolicy="no-referrer-when-downgrade"/>
